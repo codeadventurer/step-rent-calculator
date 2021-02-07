@@ -1,5 +1,8 @@
-import moment from 'moment';
 import { formatNumberToString } from './format';
+
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
 
 const calculateRentSteps = (values) => {
   const {
@@ -60,7 +63,7 @@ const fillRentSteps = ({
 
   const rentSteps = stepsArray.reduce((acc, i) => {
     const newStep = {
-      [fillRentStepsKey(i, 'beginn')]: moment(currentDate).utc().format(),
+      [fillRentStepsKey(i, 'beginn')]: dayjs(currentDate).utc().format(),
       [fillRentStepsKey(i, 'eur')]: formatNumberToString(currentRentAmount),
     };
 
@@ -70,7 +73,7 @@ const fillRentSteps = ({
         : Math.round(100 * firstStepAmount * Math.pow(priceDifference, i)) /
           100.0;
 
-    currentDate = moment(currentDate).utc().add(timeDifference, 'M');
+    currentDate = dayjs(currentDate).utc().add(timeDifference, 'M');
 
     return {
       ...acc,
@@ -82,13 +85,9 @@ const fillRentSteps = ({
 };
 
 const monthDiff = (firstStepStartDate, lastStepStartDate) => {
-  const dateTo = new Date(lastStepStartDate);
-  const dateFrom = new Date(firstStepStartDate);
-  return (
-    dateTo.getMonth() -
-    dateFrom.getMonth() +
-    12 * (dateTo.getFullYear() - dateFrom.getFullYear())
-  );
+  const dateTo = dayjs(lastStepStartDate);
+  const dateFrom = dayjs(firstStepStartDate);
+  return dateTo.diff(dateFrom, 'month');
 };
 
 const fillRentStepsKey = (index, type) => {
