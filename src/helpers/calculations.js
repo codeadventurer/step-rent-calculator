@@ -3,37 +3,40 @@ import { formatNumberToString } from './format';
 
 const calculateRentSteps = (values) => {
   const {
-    firstStepStart,
-    lastStepStart,
-    firstStepRent,
-    lastStepRent,
+    firstStepStartDate,
+    lastStepStartDate,
+    firstStepAmount,
+    lastStepAmount,
     numberOfSteps,
     slope,
   } = values;
 
   if (numberOfSteps === 1)
     return {
-      [fillRentStepsKey(1, 'beginn')]: firstStepStart,
-      [fillRentStepsKey(1, 'eur')]: formatNumberToString(firstStepRent),
+      [fillRentStepsKey(1, 'beginn')]: firstStepStartDate,
+      [fillRentStepsKey(1, 'eur')]: formatNumberToString(firstStepAmount),
     };
 
   const timeDifference =
-    monthDiff(firstStepStart, lastStepStart) / (numberOfSteps - 1);
+    monthDiff(firstStepStartDate, lastStepStartDate) / (numberOfSteps - 1);
 
   const priceDifferenceFunctions = {
-    linear: (lastStepRent - firstStepRent) / (numberOfSteps - 1),
-    percentual: Math.pow(lastStepRent / firstStepRent, 1 / (numberOfSteps - 1)),
+    linear: (lastStepAmount - firstStepAmount) / (numberOfSteps - 1),
+    percentual: Math.pow(
+      lastStepAmount / firstStepAmount,
+      1 / (numberOfSteps - 1)
+    ),
   };
 
   const priceDifference = priceDifferenceFunctions[slope];
 
-  const formattedFirstStepStart = new Date(firstStepStart);
+  const formattedFirstStepStartDate = new Date(firstStepStartDate);
 
   const rentSteps = fillRentSteps({
     slope: slope,
     numberOfSteps: numberOfSteps,
-    firstStepStart: formattedFirstStepStart,
-    firstStepRent: firstStepRent,
+    firstStepStartDate: formattedFirstStepStartDate,
+    firstStepAmount: firstStepAmount,
     timeDifference: timeDifference,
     priceDifference: priceDifference,
   });
@@ -44,13 +47,13 @@ const calculateRentSteps = (values) => {
 const fillRentSteps = ({
   slope,
   numberOfSteps,
-  firstStepStart,
-  firstStepRent,
+  firstStepStartDate,
+  firstStepAmount,
   timeDifference,
   priceDifference,
 }) => {
-  let currentDate = firstStepStart;
-  let currentRentAmount = firstStepRent;
+  let currentDate = firstStepStartDate;
+  let currentRentAmount = firstStepAmount;
 
   // stepsArray is array of indexes starting with 1, e. g. for 5 steps: [1, 2, 3, 4, 5]
   const stepsArray = [...Array(numberOfSteps).keys()].map((x) => ++x);
@@ -64,7 +67,7 @@ const fillRentSteps = ({
     currentRentAmount =
       slope === 'linear'
         ? (currentRentAmount += priceDifference)
-        : Math.round(100 * firstStepRent * Math.pow(priceDifference, i)) /
+        : Math.round(100 * firstStepAmount * Math.pow(priceDifference, i)) /
           100.0;
 
     currentDate = moment(currentDate).utc().add(timeDifference, 'M');
@@ -78,9 +81,9 @@ const fillRentSteps = ({
   return rentSteps;
 };
 
-const monthDiff = (firstStepStart, lastStepStart) => {
-  const dateTo = new Date(lastStepStart);
-  const dateFrom = new Date(firstStepStart);
+const monthDiff = (firstStepStartDate, lastStepStartDate) => {
+  const dateTo = new Date(lastStepStartDate);
+  const dateFrom = new Date(firstStepStartDate);
   return (
     dateTo.getMonth() -
     dateFrom.getMonth() +

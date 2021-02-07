@@ -3,12 +3,12 @@ import { calculateRentSteps, monthDiff } from '../helpers/calculations';
 describe('calculateRentSteps()', () => {
   describe('when slope is linear', () => {
     describe('when there is only 1 step', () => {
-      it('returns firstStepStart and one firstStepRent', () => {
+      it('returns firstStepStartDate and one firstStepAmount', () => {
         const formValues = {
-          firstStepStart: '2019-01-01T00:00:00Z',
-          lastStepStart: '2021-01-01T00:00:00Z',
-          firstStepRent: 400,
-          lastStepRent: 500,
+          firstStepStartDate: '2019-01-01T00:00:00Z',
+          lastStepStartDate: '2021-01-01T00:00:00Z',
+          firstStepAmount: 400,
+          lastStepAmount: 500,
           numberOfSteps: 1,
           slope: 'linear',
         };
@@ -23,10 +23,10 @@ describe('calculateRentSteps()', () => {
     describe('when prices are integers', () => {
       it('returns rentSteps with correct keys and values', () => {
         const formValues = {
-          firstStepStart: '2019-01-01T00:00:00Z',
-          lastStepStart: '2022-01-01T00:00:00Z',
-          firstStepRent: 400,
-          lastStepRent: 550,
+          firstStepStartDate: '2019-01-01T00:00:00Z',
+          lastStepStartDate: '2022-01-01T00:00:00Z',
+          firstStepAmount: 400,
+          lastStepAmount: 550,
           numberOfSteps: 4,
           slope: 'linear',
         };
@@ -47,10 +47,10 @@ describe('calculateRentSteps()', () => {
     describe('when prices are floats', () => {
       it('returns rentSteps with correct keys and values', () => {
         const formValues = {
-          firstStepStart: '2019-01-01T00:00:00Z',
-          lastStepStart: '2021-01-01T00:00:00Z',
-          firstStepRent: 399.5,
-          lastStepRent: 599.5,
+          firstStepStartDate: '2019-01-01T00:00:00Z',
+          lastStepStartDate: '2021-01-01T00:00:00Z',
+          firstStepAmount: 399.5,
+          lastStepAmount: 599.5,
           numberOfSteps: 3,
           slope: 'linear',
         };
@@ -69,10 +69,10 @@ describe('calculateRentSteps()', () => {
     describe('when rent increased more often than once a year', () => {
       it('returns correct dates with 1st of the month', () => {
         const formValues = {
-          firstStepStart: '2019-01-01T00:00:00Z',
-          lastStepStart: '2021-01-01T00:00:00Z',
-          firstStepRent: 400,
-          lastStepRent: 600,
+          firstStepStartDate: '2019-01-01T00:00:00Z',
+          lastStepStartDate: '2021-01-01T00:00:00Z',
+          firstStepAmount: 400,
+          lastStepAmount: 600,
           numberOfSteps: 5,
           slope: 'linear',
         };
@@ -97,10 +97,10 @@ describe('calculateRentSteps()', () => {
     describe('when prices are integers', () => {
       it('returns rentSteps with correct keys and values', () => {
         const formValues = {
-          firstStepStart: '2019-01-01T00:00:00Z',
-          lastStepStart: '2022-01-01T00:00:00Z',
-          firstStepRent: 400,
-          lastStepRent: 500,
+          firstStepStartDate: '2019-01-01T00:00:00Z',
+          lastStepStartDate: '2022-01-01T00:00:00Z',
+          firstStepAmount: 400,
+          lastStepAmount: 500,
           numberOfSteps: 4,
           slope: 'percentual',
         };
@@ -121,10 +121,10 @@ describe('calculateRentSteps()', () => {
     describe('when prices are floats', () => {
       it('returns rentSteps with correct keys and values', () => {
         const formValues = {
-          firstStepStart: '2019-01-01T00:00:00Z',
-          lastStepStart: '2021-01-01T00:00:00Z',
-          firstStepRent: 399.5,
-          lastStepRent: 599.5,
+          firstStepStartDate: '2019-01-01T00:00:00Z',
+          lastStepStartDate: '2021-01-01T00:00:00Z',
+          firstStepAmount: 399.5,
+          lastStepAmount: 599.5,
           numberOfSteps: 3,
           slope: 'percentual',
         };
