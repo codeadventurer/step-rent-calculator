@@ -41,21 +41,6 @@ const calculateRentSteps = (values) => {
   return rentSteps;
 };
 
-const monthDiff = (firstStepStart, lastStepStart) => {
-  const dateTo = new Date(lastStepStart);
-  const dateFrom = new Date(firstStepStart);
-  return (
-    dateTo.getMonth() -
-    dateFrom.getMonth() +
-    12 * (dateTo.getFullYear() - dateFrom.getFullYear())
-  );
-};
-
-// use object as argument - done
-// don't mutate arguments - done
-// one calculate function - done
-// use reduce
-
 const fillRentSteps = ({
   slope,
   numberOfSteps,
@@ -65,25 +50,42 @@ const fillRentSteps = ({
   priceDifference,
 }) => {
   let currentDate = firstStepStart;
-  let linearRentAmount = firstStepRent;
-  let rentSteps = {};
+  let currentRentAmount = firstStepRent;
 
-  for (let i = 1; i <= numberOfSteps; i++) {
-    const percentualRentAmount =
-      Math.round(100 * firstStepRent * Math.pow(priceDifference, i - 1)) /
-      100.0;
+  // stepsArray is array of indexes starting with 1, e. g. for 5 steps: [1, 2, 3, 4, 5]
+  const stepsArray = [...Array(numberOfSteps).keys()].map((x) => ++x);
 
-    rentSteps[fillRentStepsKey(i, 'beginn')] = moment(currentDate)
-      .utc()
-      .format();
-    rentSteps[fillRentStepsKey(i, 'eur')] = formatNumberToString(
-      slope === 'linear' ? linearRentAmount : percentualRentAmount
-    );
-    linearRentAmount += priceDifference;
+  const rentSteps = stepsArray.reduce((acc, i) => {
+    const newStep = {
+      [fillRentStepsKey(i, 'beginn')]: moment(currentDate).utc().format(),
+      [fillRentStepsKey(i, 'eur')]: formatNumberToString(currentRentAmount),
+    };
+
+    currentRentAmount =
+      slope === 'linear'
+        ? (currentRentAmount += priceDifference)
+        : Math.round(100 * firstStepRent * Math.pow(priceDifference, i)) /
+          100.0;
+
     currentDate = moment(currentDate).utc().add(timeDifference, 'M');
-  }
+
+    return {
+      ...acc,
+      ...newStep,
+    };
+  }, {});
 
   return rentSteps;
+};
+
+const monthDiff = (firstStepStart, lastStepStart) => {
+  const dateTo = new Date(lastStepStart);
+  const dateFrom = new Date(firstStepStart);
+  return (
+    dateTo.getMonth() -
+    dateFrom.getMonth() +
+    12 * (dateTo.getFullYear() - dateFrom.getFullYear())
+  );
 };
 
 const fillRentStepsKey = (index, type) => {
