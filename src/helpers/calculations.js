@@ -19,6 +19,7 @@ const calculateRentSteps = (values) => {
 
   const timeDifference =
     monthDiff(firstStepStart, lastStepStart) / (numberOfSteps - 1);
+
   const priceDifferenceFunctions = {
     linear: (lastStepRent - firstStepRent) / (numberOfSteps - 1),
     percentual: Math.pow(lastStepRent / firstStepRent, 1 / (numberOfSteps - 1)),
@@ -26,24 +27,16 @@ const calculateRentSteps = (values) => {
 
   const priceDifference = priceDifferenceFunctions[slope];
 
-  const currentDate = new Date(firstStepStart);
+  const formattedFirstStepStart = new Date(firstStepStart);
 
-  const rentSteps =
-    slope === 'percentual'
-      ? calculatePercentual(
-          numberOfSteps,
-          currentDate,
-          firstStepRent,
-          timeDifference,
-          priceDifference
-        )
-      : calculateLinear(
-          numberOfSteps,
-          currentDate,
-          firstStepRent,
-          timeDifference,
-          priceDifference
-        );
+  const rentSteps = fillRentSteps({
+    slope: slope,
+    numberOfSteps: numberOfSteps,
+    firstStepStart: formattedFirstStepStart,
+    firstStepRent: firstStepRent,
+    timeDifference: timeDifference,
+    priceDifference: priceDifference,
+  });
 
   return rentSteps;
 };
@@ -58,44 +51,35 @@ const monthDiff = (firstStepStart, lastStepStart) => {
   );
 };
 
-const calculateLinear = (
+// use object as argument - done
+// don't mutate arguments - done
+// one calculate function - done
+// use reduce
+
+const fillRentSteps = ({
+  slope,
   numberOfSteps,
-  currentDate,
+  firstStepStart,
   firstStepRent,
   timeDifference,
-  priceDifference
-) => {
+  priceDifference,
+}) => {
+  let currentDate = firstStepStart;
+  let linearRentAmount = firstStepRent;
   let rentSteps = {};
-  for (let i = 1; i <= numberOfSteps; i++) {
-    rentSteps[fillRentStepsKey(i, 'beginn')] = moment(currentDate)
-      .utc()
-      .format();
-    rentSteps[fillRentStepsKey(i, 'eur')] = formatNumberToString(firstStepRent);
-    firstStepRent += priceDifference;
-    currentDate = moment(currentDate).utc().add(timeDifference, 'M');
-  }
 
-  return rentSteps;
-};
-
-const calculatePercentual = (
-  numberOfSteps,
-  currentDate,
-  firstStepRent,
-  timeDifference,
-  priceDifference
-) => {
-  let rentSteps = {};
   for (let i = 1; i <= numberOfSteps; i++) {
-    const price =
+    const percentualRentAmount =
       Math.round(100 * firstStepRent * Math.pow(priceDifference, i - 1)) /
       100.0;
 
     rentSteps[fillRentStepsKey(i, 'beginn')] = moment(currentDate)
       .utc()
       .format();
-    rentSteps[fillRentStepsKey(i, 'eur')] = formatNumberToString(price);
-
+    rentSteps[fillRentStepsKey(i, 'eur')] = formatNumberToString(
+      slope === 'linear' ? linearRentAmount : percentualRentAmount
+    );
+    linearRentAmount += priceDifference;
     currentDate = moment(currentDate).utc().add(timeDifference, 'M');
   }
 
