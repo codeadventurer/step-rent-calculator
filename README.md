@@ -13,3 +13,7 @@
 - [ ] create form (consider using exteranl library for the form)
 - [ ] use styled-components for styling
 - [ ] write tests for React components
+
+##### Sketch
+
+![Sketch](public/step_rent_calculator_sketch.png)
