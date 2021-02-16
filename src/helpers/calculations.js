@@ -1,51 +1,14 @@
-import { formatNumberToString } from './format';
+import { formatNumberToString } from './format'
+import dayjs from '../configs/dayjs'
 
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
-dayjs.extend(utc);
-
-const calculateRentSteps = (values) => {
-  const {
-    firstStepStartDate,
-    lastStepStartDate,
-    firstStepAmount,
-    lastStepAmount,
-    numberOfSteps,
-    slope,
-  } = values;
-
-  if (numberOfSteps === 1)
-    return {
-      [fillRentStepsKey(1, 'beginn')]: firstStepStartDate,
-      [fillRentStepsKey(1, 'eur')]: formatNumberToString(firstStepAmount),
-    };
-
-  const timeDifference =
-    monthDiff(firstStepStartDate, lastStepStartDate) / (numberOfSteps - 1);
-
-  const priceDifferenceFunctions = {
-    linear: (lastStepAmount - firstStepAmount) / (numberOfSteps - 1),
-    percentual: Math.pow(
-      lastStepAmount / firstStepAmount,
-      1 / (numberOfSteps - 1)
-    ),
-  };
-
-  const priceDifference = priceDifferenceFunctions[slope];
-
-  const formattedFirstStepStartDate = new Date(firstStepStartDate);
-
-  const rentSteps = fillRentSteps({
-    slope: slope,
-    numberOfSteps: numberOfSteps,
-    firstStepStartDate: formattedFirstStepStartDate,
-    firstStepAmount: firstStepAmount,
-    timeDifference: timeDifference,
-    priceDifference: priceDifference,
-  });
-
-  return rentSteps;
-};
+const monthDiff = (firstStepStartDate, lastStepStartDate) => {
+  const dateTo = dayjs(lastStepStartDate)
+  const dateFrom = dayjs(firstStepStartDate)
+  return dateTo.diff(dateFrom, 'month')
+}
+const fillRentStepKey = (index, type) => {
+  return `information.staffeln.staffel_${index}.${type}`
+}
 
 const fillRentSteps = ({
   slope,
@@ -55,43 +18,79 @@ const fillRentSteps = ({
   timeDifference,
   priceDifference,
 }) => {
-  let currentDate = firstStepStartDate;
-  let currentRentAmount = firstStepAmount;
-
   // stepsArray is array of indexes starting with 1, e. g. for 5 steps: [1, 2, 3, 4, 5]
-  const stepsArray = [...Array(numberOfSteps).keys()].map((x) => ++x);
+  const stepsArray = [...Array(numberOfSteps).keys()].map((index) => ++index)
 
-  const rentSteps = stepsArray.reduce((acc, i) => {
-    const newStep = {
-      [fillRentStepsKey(i, 'beginn')]: dayjs(currentDate).utc().format(),
-      [fillRentStepsKey(i, 'eur')]: formatNumberToString(currentRentAmount),
-    };
+  const rentSteps = stepsArray.reduce(
+    (steps, index) => {
+      const { currentDate, currentRentAmount } = steps
 
-    currentRentAmount =
-      slope === 'linear'
-        ? (currentRentAmount += priceDifference)
-        : Math.round(100 * firstStepAmount * Math.pow(priceDifference, i)) /
-          100.0;
+      const newStep = {
+        [fillRentStepKey(index, 'beginn')]: dayjs(currentDate).utc().format(),
+        [fillRentStepKey(index, 'eur')]: formatNumberToString(
+          currentRentAmount
+        ),
+      }
 
-    currentDate = dayjs(currentDate).utc().add(timeDifference, 'M');
+      return {
+        ...steps,
+        ...newStep,
+        currentRentAmount:
+          slope === 'linear'
+            ? currentRentAmount + priceDifference
+            : Math.round(
+                100 * firstStepAmount * Math.pow(priceDifference, index)
+              ) / 100.0,
+        currentDate: dayjs(currentDate).utc().add(timeDifference, 'M'),
+      }
+    },
+    {
+      currentDate: firstStepStartDate,
+      currentRentAmount: firstStepAmount,
+    }
+  )
 
+  const { currentRentAmount, currentDate, ...rest } = rentSteps
+
+  return rest
+}
+
+const calculateRentSteps = (values) => {
+  const {
+    firstStepStartDate,
+    lastStepStartDate,
+    firstStepAmount,
+    lastStepAmount,
+    numberOfSteps,
+    slope,
+  } = values
+
+  if (numberOfSteps === 1)
     return {
-      ...acc,
-      ...newStep,
-    };
-  }, {});
+      [fillRentStepKey(1, 'beginn')]: firstStepStartDate,
+      [fillRentStepKey(1, 'eur')]: formatNumberToString(firstStepAmount),
+    }
 
-  return rentSteps;
-};
+  const divisor = numberOfSteps - 1
 
-const monthDiff = (firstStepStartDate, lastStepStartDate) => {
-  const dateTo = dayjs(lastStepStartDate);
-  const dateFrom = dayjs(firstStepStartDate);
-  return dateTo.diff(dateFrom, 'month');
-};
+  const timeDifference =
+    monthDiff(firstStepStartDate, lastStepStartDate) / divisor
 
-const fillRentStepsKey = (index, type) => {
-  return `information.staffeln.staffel_${index}.${type}`;
-};
+  const priceDifferenceFunctions = {
+    linear: (lastStepAmount - firstStepAmount) / divisor,
+    percentual: Math.pow(lastStepAmount / firstStepAmount, 1 / divisor),
+  }
 
-export { calculateRentSteps, monthDiff };
+  const priceDifference = priceDifferenceFunctions[slope]
+
+  return fillRentSteps({
+    slope,
+    numberOfSteps,
+    firstStepStartDate,
+    firstStepAmount,
+    timeDifference,
+    priceDifference,
+  })
+}
+
+export { calculateRentSteps, monthDiff }
