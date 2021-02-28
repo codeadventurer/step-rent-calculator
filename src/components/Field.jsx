@@ -5,7 +5,7 @@ export default function Field({label, name, type, onChange}) {
     <FieldContainer>
       <label>{label}</label>
       {type === 'select' ?
-      <select name={name}>
+      <select name={name} onChange={onChange}>
         <option value='linear'>linear</option>
         <option value='percentual'>percentual</option>
       </select> :

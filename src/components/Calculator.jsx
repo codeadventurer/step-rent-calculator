@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 
-import dayjs from '../configs/dayjs'
 import useForm from '../hooks/useForm'
 import { CalculatorContainer, FieldsContainer, ButtonContainer, Button } from '../styles/Calculator'
 import Field from './Field'
@@ -15,7 +14,7 @@ const fields = [
   {label: 'Number of Steps', name: 'numberOfSteps', type: 'number'},
   {label: 'Slope', name: 'slope', type: 'select'}]
 
-export default function Calculator() {
+export default function Calculator({onSubmit}) {
 
   const { initialize, initialized, change, formValues } = useForm()
 
@@ -32,15 +31,13 @@ export default function Calculator() {
   }, [])
 
   const handleChange = (event) => {
-    console.log(event)
     change(event.target.name, event.target.value)
   }
 
   const handleSubmit = () => {
     const values = getCalculationValues()
-    console.log('values: ', values)
     const rentSteps = calculateRentSteps(values)
-    console.log(rentSteps)
+    onSubmit(rentSteps)
   }
 
   const getCalculationValues = () => {
