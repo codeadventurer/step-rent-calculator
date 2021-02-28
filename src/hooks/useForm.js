@@ -11,24 +11,6 @@ export default function useForm() {
     })
   }
 
-  const changeBatch = (updatedFields) => {
-    const values = Object.keys(updatedFields).reduce(
-      (acc, item) => ({
-        ...acc,
-        [item]: {
-          name: item,
-          value: updatedFields[item],
-          pristine: false,
-        },
-      }),
-      {}
-    )
-    setFormValues({
-      ...formValues,
-      ...values,
-    })
-  }
-
   const initialize = (initialValues) => {
     const values = Object.keys(initialValues).reduce(
       (acc, item) => ({
@@ -45,5 +27,5 @@ export default function useForm() {
     setFormValues(values)
   }
 
-  return { change, changeBatch, formValues, initialize, initialized }
+  return { change, formValues, initialize, initialized }
 }

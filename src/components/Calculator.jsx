@@ -19,19 +19,29 @@ export default function Calculator({onSubmit}) {
   const { initialize, initialized, change, formValues } = useForm()
 
   useEffect(() => {
+    initializeValues()
+  }, [])
+
+  const initializeValues = () => {
     const initialValues = {
       firstStepStartDate: '',
       lastStepStartDate: '',
-      firstStepAmount: 0,
-      lastStepAmount: 0,
-      numberOfSteps: 0,
+      firstStepAmount: '',
+      lastStepAmount: '',
+      numberOfSteps: '',
       slope: 'linear'
     }
     initialize(initialValues)
-  }, [])
+  }
 
   const handleChange = (event) => {
     change(event.target.name, event.target.value)
+  }
+
+  const handleClear = () => {
+    console.log('clear!')
+    initializeValues()
+    onSubmit({})
   }
 
   const handleSubmit = () => {
@@ -62,6 +72,7 @@ export default function Calculator({onSubmit}) {
     return values
   }
 
+  if (initialized) {
   return (
     <CalculatorContainer>
       <FieldsContainer>
@@ -71,12 +82,17 @@ export default function Calculator({onSubmit}) {
           label={field.label} 
           name={field.name} 
           type={field.type}
+          value={formValues[field.name].value}
           onChange={handleChange}/>
         ))}
       </FieldsContainer>
       <ButtonContainer>
+        <Button onClick={handleClear}>Clear</Button>
         <Button onClick={handleSubmit}>Calculate</Button>
       </ButtonContainer>
     </CalculatorContainer>
-  )
+    )
+  }
+  
+  return null
 }
