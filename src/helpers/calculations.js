@@ -26,7 +26,9 @@ const fillRentSteps = ({
       const { currentDate, currentRentAmount } = steps
 
       const newStep = {
-        [fillRentStepKey(index, 'beginn')]: dayjs(currentDate).utc().format(),
+        [fillRentStepKey(index, 'beginn')]: dayjs(currentDate).format(
+          'DD.MM.YYYY'
+        ),
         [fillRentStepKey(index, 'eur')]: formatNumberToString(
           currentRentAmount
         ),
@@ -41,7 +43,7 @@ const fillRentSteps = ({
             : Math.round(
                 100 * firstStepAmount * Math.pow(priceDifference, index)
               ) / 100.0,
-        currentDate: dayjs(currentDate).utc().add(timeDifference, 'M'),
+        currentDate: dayjs(currentDate).add(timeDifference, 'M'),
       }
     },
     {
@@ -67,7 +69,9 @@ const calculateRentSteps = (values) => {
 
   if (numberOfSteps === 1)
     return {
-      [fillRentStepKey(1, 'beginn')]: firstStepStartDate,
+      [fillRentStepKey(1, 'beginn')]: dayjs(firstStepStartDate).format(
+        'DD.MM.YYYY'
+      ),
       [fillRentStepKey(1, 'eur')]: formatNumberToString(firstStepAmount),
     }
 
