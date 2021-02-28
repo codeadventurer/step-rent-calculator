@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 
 import useForm from '../hooks/useForm'
+import { useSteps } from '../context/steps-context'
 import { CalculatorContainer, FieldsContainer, ButtonContainer, Button } from '../styles/Calculator'
 import Field from './Field'
 import { calculateRentSteps } from '../helpers/calculations'
@@ -14,9 +15,11 @@ const fields = [
   {label: 'Number of Steps', name: 'numberOfSteps', type: 'number'},
   {label: 'Slope', name: 'slope', type: 'select'}]
 
-export default function Calculator({onSubmit}) {
-
+export default function Calculator() {
   const { initialize, initialized, change, formValues } = useForm()
+  const [, setSteps] = useSteps()
+
+  console.log('setSteps ', setSteps)
 
   useEffect(() => {
     initializeValues()
@@ -39,15 +42,14 @@ export default function Calculator({onSubmit}) {
   }
 
   const handleClear = () => {
-    console.log('clear!')
     initializeValues()
-    onSubmit({})
+    setSteps({})
   }
 
   const handleSubmit = () => {
     const values = getCalculationValues()
     const rentSteps = calculateRentSteps(values)
-    onSubmit(rentSteps)
+    setSteps(rentSteps)
   }
 
   const getCalculationValues = () => {
@@ -72,6 +74,8 @@ export default function Calculator({onSubmit}) {
     return values
   }
 
+  const isInvalid =  Object.values(formValues).some(item => !item.value || item.value === '0')
+
   if (initialized) {
   return (
     <CalculatorContainer>
@@ -88,7 +92,7 @@ export default function Calculator({onSubmit}) {
       </FieldsContainer>
       <ButtonContainer>
         <Button onClick={handleClear}>Clear</Button>
-        <Button onClick={handleSubmit}>Calculate</Button>
+        <Button onClick={handleSubmit} disabled={isInvalid}>Calculate</Button>
       </ButtonContainer>
     </CalculatorContainer>
     )
