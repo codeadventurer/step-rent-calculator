@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useCallback } from 'react'
 
 import useForm from '../hooks/useForm'
 import { useSteps } from '../context/steps-context'
@@ -19,11 +19,7 @@ export default function Calculator() {
   const { initialize, initialized, change, formValues } = useForm()
   const [, setSteps] = useSteps()
 
-  useEffect(() => {
-    initializeValues()
-  }, [])
-
-  const initializeValues = () => {
+  const initializeValues = useCallback(() => {
     const initialValues = {
       firstStepStartDate: '',
       lastStepStartDate: '',
@@ -33,7 +29,12 @@ export default function Calculator() {
       slope: 'linear'
     }
     initialize(initialValues)
-  }
+  }, [])
+
+  useEffect(() => {
+    initializeValues()
+  }, [initializeValues])
+
 
   const handleChange = (event) => {
     change(event.target.name, event.target.value)
