@@ -19,8 +19,6 @@ export default function Calculator() {
   const { initialize, initialized, change, formValues } = useForm()
   const [, setSteps] = useSteps()
 
-  console.log('setSteps ', setSteps)
-
   useEffect(() => {
     initializeValues()
   }, [])
