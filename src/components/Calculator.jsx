@@ -29,7 +29,7 @@ export default function Calculator() {
       slope: 'linear'
     }
     initialize(initialValues)
-  }, [])
+  }, [initialize])
 
   useEffect(() => {
     initializeValues()

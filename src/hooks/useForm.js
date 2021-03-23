@@ -1,10 +1,10 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 
 export default function useForm() {
   const [formValues, setFormValues] = useState({})
   const [initialized, setInitialized] = useState(false)
 
-  const initialize = (initialValues) => {
+  const initialize = useCallback((initialValues) => {
     const values = Object.keys(initialValues).reduce(
       (acc, item) => ({
         ...acc,
@@ -18,14 +18,14 @@ export default function useForm() {
     )
     setInitialized(true)
     setFormValues(values)
-  }
+  }, [])
 
-  const change = (name, value) => {
-    setFormValues({
-      ...formValues,
+  const change = useCallback((name, value) => {
+    setFormValues((prevState) => ({
+      ...prevState,
       [name]: { name, value, pristine: false },
-    })
-  }
+    }))
+  }, [])
 
   return { change, formValues, initialize, initialized }
 }
