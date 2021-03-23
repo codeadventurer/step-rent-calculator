@@ -2,7 +2,13 @@ import { useEffect, useCallback } from 'react'
 
 import useForm from '../hooks/useForm'
 import { useSteps } from '../context/steps-context'
-import { CalculatorContainer, FieldsContainer, ButtonContainer, Button } from '../styles/Calculator'
+import { 
+  CalculatorContainer,
+  Heading, 
+  FieldsContainer, 
+  ButtonContainer, 
+  Button 
+} from '../styles/Calculator'
 import Field from './Field'
 import { calculateRentSteps } from '../helpers/calculations'
 
@@ -79,6 +85,7 @@ export default function Calculator() {
   
   return (
     <CalculatorContainer>
+      <Heading>Rent Step Calculator</Heading>
       <FieldsContainer>
         {fields.map((field, index) => (
         <Field 

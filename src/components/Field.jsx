@@ -9,7 +9,7 @@ export default function Field({label, name, type, value, onChange}) {
         <option value='linear'>linear</option>
         <option value='percentual'>percentual</option>
       </Select> :
-      <Input id={name} name={name} type={type} value={value} onChange={onChange}/>
+      <Input id={name} name={name} type={type} value={value} onChange={onChange} min="0"/>
       }
     </FieldContainer>
   )

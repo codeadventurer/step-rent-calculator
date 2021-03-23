@@ -5,6 +5,10 @@ export const FieldContainer = styled.div`
   display: flex;
   flex-direction: column;
   margin: 0.5rem 0;
+
+  @media (max-width: 1024px) {
+    width: 100%;
+  }
 `
 
 export const Label = styled.label`
@@ -21,9 +25,15 @@ export const Input = styled.input`
   color: #1f55f5;
   font-size: 1.2rem;
   font-family: 'Lato';
+  -moz-appearance: textfield;
+
+  [type='number'] {
+    -moz-appearance: textfield;
+  }
 
   :focus {
     outline-style: solid;
+    box-shadow: -7px 7px #1f55f5;
   }
 
   ::-webkit-calendar-picker-indicator {
@@ -44,8 +54,12 @@ export const Select = styled.select`
   padding: 0 0.5rem;
   color: #1f55f5;
   font-size: 1.2rem;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  border-radius: 0;
 
   :focus {
     outline-style: solid;
+    box-shadow: -7px 7px #1f55f5;
   }
 `

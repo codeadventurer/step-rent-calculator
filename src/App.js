@@ -2,15 +2,17 @@ import { StepsProvider } from './context/steps-context'
 import Calculator from './components/Calculator'
 import Result from './components/Result'
 
-import { Container } from './styles/App'
+import { Container, BackgroundContainer } from './styles/App'
 
 function App() {
   return (
     <StepsProvider>
-      <Container>
-        <Calculator />
-        <Result />
-      </Container>
+      <BackgroundContainer>
+        <Container>
+          <Calculator />
+          <Result />
+        </Container>
+      </BackgroundContainer>
     </StepsProvider>
   )
 }
