@@ -75,7 +75,8 @@ export default function Calculator() {
 
   const isInvalid =  Object.values(formValues).some(item => !item.value || item.value === '0')
 
-  if (initialized) {
+  if (!initialized) return null
+  
   return (
     <CalculatorContainer>
       <FieldsContainer>
@@ -95,7 +96,4 @@ export default function Calculator() {
       </ButtonContainer>
     </CalculatorContainer>
     )
-  }
-  
-  return null
 }

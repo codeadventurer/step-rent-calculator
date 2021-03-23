@@ -1,6 +1,11 @@
 import { formatNumberToString } from './format'
 import dayjs from '../configs/dayjs'
 
+const SLOPES = {
+  LINEAR: 'linear',
+  PERCENTUAL: 'percentual',
+}
+
 const monthDiff = (firstStepStartDate, lastStepStartDate) => {
   const dateTo = dayjs(lastStepStartDate)
   const dateFrom = dayjs(firstStepStartDate)
@@ -38,7 +43,7 @@ const fillRentSteps = ({
         ...steps,
         ...newStep,
         currentRentAmount:
-          slope === 'linear'
+          slope === SLOPES.LINEAR
             ? currentRentAmount + priceDifference
             : Math.round(
                 100 * firstStepAmount * Math.pow(priceDifference, index)
